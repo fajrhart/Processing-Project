@@ -1,1 +1,63 @@
 
+import de.voidplus.leapmotion.*;
+
+float INTERACTION_SPACE_WIDTH = 200; // left-right from user
+float INTERACTION_SPACE_DEPTH = 150; // away-and-toward user
+float FINGER_DOT = 30;
+
+LeapMotion leap;
+
+void setup() {
+  size(800, 500, OPENGL);
+  leap = new LeapMotion(this);
+  textAlign(CENTER);
+}
+
+void draw() {
+  background(100);
+
+  // FPS
+  int fps = leap.getFrameRate();
+  fill(#00E310);
+  text(fps + " fps", 20, 20);
+
+  for (Hand hand : leap.getHands ()) {
+
+    PVector ibu = hand.getThumb().getRawPositionOfJointTip();
+    PVector telunjuk = hand.getIndexFinger().getRawPositionOfJointTip();
+    PVector manis = hand.getRingFinger().getRawPositionOfJointTip();
+    PVector tengah = hand.getMiddleFinger().getRawPositionOfJointTip();
+    PVector kelingking = hand.getPinkyFinger().getRawPositionOfJointTip();
+
+    handleFinger(ibu, "ibu");
+    handleFinger(telunjuk, "telunjuk");
+    handleFinger(tengah, "tengah");
+    handleFinger(manis, "manis");
+    handleFinger(kelingking, "kelingking");
+    println(ibu, "ibu");;
+    println(telunjuk, "telunjuk");
+    println(tengah, "tengah");
+    println(manis, "manis");
+    println(kelingking, "kelingking");
+    
+
+    hand.draw();
+  }
+}
+
+void handleFinger(PVector pos, String id) {
+
+  // map finger tip position to 2D surface
+  float x = map(pos.x, -INTERACTION_SPACE_WIDTH,
+  INTERACTION_SPACE_WIDTH, 0, width);
+  float y = map(pos.z, -INTERACTION_SPACE_DEPTH,
+  INTERACTION_SPACE_DEPTH, 0, height);
+
+  fill(#00E310);
+  noStroke();
+  ellipse(x, y, FINGER_DOT, FINGER_DOT);
+
+  // ID
+  fill(0);
+  text(id, x, y + 5);
+}
